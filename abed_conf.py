@@ -79,10 +79,10 @@ PARAMS = {
 COMMANDS = {
         'OLS': ("Rscript --no-save --slave {execdir}/ols.R "
             "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData"),
-        'Lasso': ("Rscript --no-save --slave {execdir}/lasso.py "
+        'Lasso': ("Rscript --no-save --slave {execdir}/lasso.R "
             "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData "
             "{cv_seed} {alpha}"),
-        'Ridge': ("Rscript --no-save --slave {execdir}/ridge.py "
+        'Ridge': ("Rscript --no-save --slave {execdir}/ridge.R "
             "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData "
             "{cv_seed} {alpha}")
         }
