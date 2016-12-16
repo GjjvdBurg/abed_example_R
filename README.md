@@ -9,6 +9,9 @@ See the documentation at
 [https://gjjvdburg.github.io/abed/usage/example.html](https://gjjvdburg.github.io/abed/usage/example.html) 
 for a walkthrough of this example.
 
+This example is also available in Python, 
+[here](https://github.com/GjjvdBurg/abed_example_python).
+
 ## License
 All code licensed under the GPL v3.
 
