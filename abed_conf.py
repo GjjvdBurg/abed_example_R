@@ -1,12 +1,13 @@
+import sklearn.metrics
 
 ##############################################################################
 #                                General Settings                            #
 ##############################################################################
-PROJECT_NAME = ''
+PROJECT_NAME = 'abed_example_R'
 TASK_FILE = 'abed_tasks.txt'
 AUTO_FILE = 'abed_auto.txt'
-RESULT_DIR = '/path/to/local/results'
-STAGE_DIR = '/path/to/local/stagedir'
+RESULT_DIR = './results'
+STAGE_DIR = './stagedir'
 MAX_FILES = 1000
 ZIP_DIR = './zips'
 LOG_DIR = './logs'
@@ -28,7 +29,7 @@ REMOTE_SCRATCH_ENV = 'TMPDIR'
 ##############################################################################
 #                      Settings for Master/Worker program                    #
 ##############################################################################
-MW_SENDATONCE = 100 # number of tasks (hashes!) to send at once
+MW_SENDATONCE = 20 # number of tasks (hashes!) to send at once
 MW_COPY_SLEEP = 120
 
 ##############################################################################
@@ -39,9 +40,9 @@ MW_COPY_SLEEP = 120
 #TYPE = 'ASSESS'
 
 # Cross validation with train and test dataset #
-#TYPE = 'CV_TT'
-#CV_BASESEED = 123456
-#YTRAIN_LABEL = 'y_train'
+TYPE = 'CV_TT'
+CV_BASESEED = 123456
+YTRAIN_LABEL = 'y_train'
 
 # Commands defined in a text file #
 #TYPE = 'RAW'
@@ -60,34 +61,39 @@ BUILD_CMD = 'make all' # Build command
 DATADIR = 'datasets'
 EXECDIR = 'execs'
 
-DATASETS = ['dataset_1', 'dataset_2']
+DATASETS = [('dataset_%i_train' % i, 'dataset_%i_test' % i) for i in 
+        range(1, 11)]
 DATASET_NAMES = {k:str(i) for i, k in enumerate(DATASETS)}
 
-METHODS = ['method_1', 'method_2']
+METHODS = ['OLS', 'Lasso', 'Ridge']
 PARAMS = {
-        'method_1': {
-            'param_1': [val_1, val_2],
-            'param_2': [val_3, val_4],
-            'param_3': [val_5, val_6]
+        'OLS': {},
+        'Lasso': {
+            'alpha': [pow(2, x) for x in range(-8, 9, 2)]
             },
-        'method_2': {
-            'param_1': [val_1, val_2, val_3],
-            },
+        'Ridge': {
+            'alpha': [pow(2, x) for x in range(-8, 9, 2)]
+            }
         }
 
 COMMANDS = {
-        'method_1': ("{execdir}/method_1 {datadir}/{dataset} {param_1} "
-            "{param_2} {param_3}"),
-        'method_2': "{execdir}/method_2 {datadir}/{dataset} {param_1}"
+        'OLS': ("Rscript --no-save --slave {execdir}/ols.R "
+            "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData"),
+        'Lasso': ("Rscript --no-save --slave {execdir}/lasso.py "
+            "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData "
+            "{cv_seed} {alpha}"),
+        'Ridge': ("Rscript --no-save --slave {execdir}/ridge.py "
+            "{datadir}/{train_dataset}.RData {datadir}/{test_dataset}.RData "
+            "{cv_seed} {alpha}")
         }
 
 METRICS = {
-        'NAME_1': {
-            'metric': metric_function_1,
-            'best': max
+        'MSE': {
+            'metric': sklearn.metrics.mean_squared_error,
+            'best': min
             },
-        'NAME_2': {
-            'metric': metric_function_2,
+        'MAE': {
+            'metric': sklearn.metrics.mean_absolute_error,
             'best': min
             }
         }
@@ -110,7 +116,7 @@ SIGNIFICANCE_LEVEL = 0.05
 #                                PBS Settings                                 #
 ###############################################################################
 PBS_NODES = 1
-PBS_WALLTIME = 360   # Walltime in minutes
+PBS_WALLTIME = 60   # Walltime in minutes
 PBS_CPUTYPE = None
 PBS_CORETYPE = None
 PBS_PPN = None
